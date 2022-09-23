@@ -1,0 +1,13 @@
+run:
+  tests: true
+
+linters:
+  disable-all: false
+  enable-all: true
+  disable:
+    - wsl
+    - exhaustivestruct
+    - gofumpt
+    - goimports
+    - wrapcheck
+    - noctx
