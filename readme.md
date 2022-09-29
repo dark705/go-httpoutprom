@@ -25,7 +25,7 @@ Labels:
 ### Wrap client:
 
 ``` go
-prometheus.MustRegister(httpoutprom.Collectors()...)
+prometheus.MustRegister(httpoutprom.Collector())
 
 client := httpoutprom.NewClient(http.DefaultClient)
 
@@ -51,7 +51,7 @@ fmt.Printf("status: %d\nbody: %s\n", response.StatusCode, body)
 ### Wrap Transport:
 
 ``` go
-prometheus.MustRegister(httpoutprom.Collectors()...)
+prometheus.MustRegister(httpoutprom.Collector())
 
 client := &http.Client{
 		Transport: httpoutprom.NewTransport(http.DefaultTransport),

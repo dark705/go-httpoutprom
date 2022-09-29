@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	prometheus.MustRegister(httpoutprom.Collectors()...)
+	prometheus.MustRegister(httpoutprom.Collector())
 
 	client := httpoutprom.NewClient(http.DefaultClient)
 

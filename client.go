@@ -33,8 +33,8 @@ func (c *Client) Do(request *http.Request) (*http.Response, error) {
 			"code":   strconv.Itoa(response.StatusCode),
 		}
 
-		counter.With(labels).Inc()
-		histogram.With(labels).Observe(time.Since(start).Seconds())
+		col.counter.With(labels).Inc()
+		col.histogram.With(labels).Observe(time.Since(start).Seconds())
 	}
 
 	return response, err
