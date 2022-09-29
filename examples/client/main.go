@@ -10,7 +10,9 @@ import (
 )
 
 func main() {
-	client := httpoutprom.NewClient(http.DefaultClient, prometheus.DefaultRegisterer)
+	prometheus.MustRegister(httpoutprom.Collectors()...)
+
+	client := httpoutprom.NewClient(http.DefaultClient)
 
 	request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)
 	if err != nil {

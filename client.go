@@ -13,39 +13,12 @@ type HTTPClient interface {
 }
 
 type Client struct {
-	client    HTTPClient
-	counter   *prometheus.CounterVec
-	histogram *prometheus.HistogramVec
+	client HTTPClient
 }
 
-func NewClient(client HTTPClient, registerer prometheus.Registerer) *Client {
-	counter := prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "http_outgoing_request_total",
-			Help: "Number of outgoing http request.",
-		},
-		[]string{
-			"host", "scheme", "method", "code",
-		},
-	)
-
-	histogram := prometheus.NewHistogramVec(
-		prometheus.HistogramOpts{
-			Name:    "http_outgoing_request_duration_seconds",
-			Help:    "A histogram of outgoing http request latencies.",
-			Buckets: prometheus.DefBuckets,
-		},
-		[]string{
-			"host", "scheme", "method", "code",
-		},
-	)
-
-	registerer.MustRegister(counter, histogram)
-
+func NewClient(client HTTPClient) *Client {
 	return &Client{
-		client:    client,
-		counter:   counter,
-		histogram: histogram,
+		client: client,
 	}
 }
 
@@ -60,8 +33,8 @@ func (c *Client) Do(request *http.Request) (*http.Response, error) {
 			"code":   strconv.Itoa(response.StatusCode),
 		}
 
-		c.counter.With(labels).Inc()
-		c.histogram.With(labels).Observe(time.Since(start).Seconds())
+		counter.With(labels).Inc()
+		histogram.With(labels).Observe(time.Since(start).Seconds())
 	}
 
 	return response, err

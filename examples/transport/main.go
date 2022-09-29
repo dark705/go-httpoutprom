@@ -10,8 +10,10 @@ import (
 )
 
 func main() {
+	prometheus.MustRegister(httpoutprom.Collectors()...)
+
 	client := &http.Client{
-		Transport: httpoutprom.NewTransport(http.DefaultTransport, prometheus.DefaultRegisterer),
+		Transport: httpoutprom.NewTransport(http.DefaultTransport),
 	}
 
 	request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)

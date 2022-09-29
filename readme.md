@@ -25,7 +25,9 @@ Labels:
 ### Wrap client:
 
 ``` go
-client := httpoutprom.NewClient(http.DefaultClient, prometheus.DefaultRegisterer)
+prometheus.MustRegister(httpoutprom.Collectors()...)
+
+client := httpoutprom.NewClient(http.DefaultClient)
 
 request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)
 if err != nil {
@@ -49,27 +51,29 @@ fmt.Printf("status: %d\nbody: %s\n", response.StatusCode, body)
 ### Wrap Transport:
 
 ``` go
+prometheus.MustRegister(httpoutprom.Collectors()...)
+
 client := &http.Client{
-	Transport: httpoutprom.NewTransport(http.DefaultTransport, prometheus.DefaultRegisterer),
+		Transport: httpoutprom.NewTransport(http.DefaultTransport),
 }
-	
+
 request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)
 if err != nil {
 	panic(err)
 }
-	
+
 response, err := client.Do(request)
 if err != nil {
 	panic(err)
 }
 defer response.Body.Close()
-	
+
 body, err := io.ReadAll(response.Body)
 if err != nil {
 	panic(err)
 }
-	
-fmt.Printf("status: %d\nbody: %s\n", response.StatusCode, body)
+
+fmt.Printf("status: %d\nbody: %s\n", response.StatusCode, body) //nolint:forbidigo
 ```
 
 ## Licensing
