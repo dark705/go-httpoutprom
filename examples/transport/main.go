@@ -6,14 +6,11 @@ import (
 	"net/http"
 
 	"github.com/dark705/go-httpoutprom"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 func main() {
-	prometheus.MustRegister(httpoutprom.Collector())
-
 	client := &http.Client{
-		Transport: httpoutprom.NewTransport(http.DefaultTransport),
+		Transport: httpoutprom.NewTransport(httpoutprom.NewRecorder(httpoutprom.Config{}), http.DefaultTransport),
 	}
 
 	request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)

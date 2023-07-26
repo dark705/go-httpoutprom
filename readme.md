@@ -11,7 +11,7 @@ Metrics:
 | `http_outgoing_request_total`                  | A counter for outgoing http requests.            |
 | `http_outgoing_request_duration_seconds`       | A histogram of outgoing http request latencies.  |
 
-Labels:
+Default labels:
 
 | label    | description                                    |
 |----------|------------------------------------------------|
@@ -22,59 +22,7 @@ Labels:
 
 ## Examples
 
-### Wrap client:
-
-``` go
-prometheus.MustRegister(httpoutprom.Collector())
-
-client := httpoutprom.NewClient(http.DefaultClient)
-
-request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)
-if err != nil {
-	panic(err)
-}
-
-response, err := client.Do(request)
-if err != nil {
-	panic(err)
-}
-defer response.Body.Close()
-
-body, err := io.ReadAll(response.Body)
-if err != nil {
-	panic(err)
-}
-	
-fmt.Printf("status: %d\nbody: %s\n", response.StatusCode, body)
-```
-
-### Wrap Transport:
-
-``` go
-prometheus.MustRegister(httpoutprom.Collector())
-
-client := &http.Client{
-		Transport: httpoutprom.NewTransport(http.DefaultTransport),
-}
-
-request, err := http.NewRequest(http.MethodGet, "https://httpbin.org/anything", nil)
-if err != nil {
-	panic(err)
-}
-
-response, err := client.Do(request)
-if err != nil {
-	panic(err)
-}
-defer response.Body.Close()
-
-body, err := io.ReadAll(response.Body)
-if err != nil {
-	panic(err)
-}
-
-fmt.Printf("status: %d\nbody: %s\n", response.StatusCode, body) //nolint:forbidigo
-```
+See example folder.
 
 ## Licensing
 

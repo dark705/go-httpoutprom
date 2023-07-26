@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 type HTTPClient interface {
@@ -13,12 +11,14 @@ type HTTPClient interface {
 }
 
 type Client struct {
-	client HTTPClient
+	client   HTTPClient
+	recorder *Recorder
 }
 
-func NewClient(client HTTPClient) *Client {
+func NewClient(recorder *Recorder, client HTTPClient) *Client {
 	return &Client{
-		client: client,
+		recorder: recorder,
+		client:   client,
 	}
 }
 
@@ -26,15 +26,9 @@ func (c *Client) Do(request *http.Request) (*http.Response, error) {
 	start := time.Now()
 	response, err := c.client.Do(request)
 	if err == nil {
-		labels := prometheus.Labels{
-			"host":   request.URL.Host,
-			"scheme": request.URL.Scheme,
-			"method": request.Method,
-			"code":   strconv.Itoa(response.StatusCode),
-		}
-
-		col.counter.With(labels).Inc()
-		col.histogram.With(labels).Observe(time.Since(start).Seconds())
+		c.recorder.ObserveDurationRequest(time.Since(start),
+			request.URL.Host, request.URL.Scheme, request.Method, strconv.Itoa(response.StatusCode))
+		c.recorder.IncRequest(request.URL.Host, request.URL.Scheme, request.Method, strconv.Itoa(response.StatusCode))
 	}
 
 	return response, err
